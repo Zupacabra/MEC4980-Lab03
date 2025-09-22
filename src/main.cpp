@@ -34,7 +34,9 @@ const char *deviceName = "Micro OLED";
 #endif
 
 int yoffset;
+int LEDpin = 10;
 float targetTemp = 20.0;
+float temp = 25.0;
 const char *degreeSys[] = {"C", "F", "K", "R"};
 int currentSystem = 0; // 0 = C, 1 = F, 2 = K, 3 = R
 float scaledTargetTemp = targetTemp;
@@ -61,6 +63,7 @@ void setup()
   pinMode(pinButton1, INPUT_PULLDOWN);
   pinMode(pinButton2, INPUT_PULLDOWN);
   pinMode(pinButton3, INPUT_PULLDOWN);
+  pinMode(LEDpin, OUTPUT);
 
   delay(3000);
 
@@ -101,7 +104,7 @@ void loop()
 
   if (currentState == DisplayTemps)
   {
-    float temp = bme.readTemperature();
+    temp = bme.readTemperature();
 
     switch (currentSystem)
     {
@@ -200,6 +203,12 @@ void loop()
     sprintf(myNewText, "System: %s", degreeSys[currentSystem]);
     myOLED.erase();
     myOLED.text(3, yoffset, myNewText);
+  }
+  
+  if (temp < targetTemp){
+    digitalWrite(LEDpin, 1);
+  }else{
+    digitalWrite(LEDpin, 0);
   }
 
   myOLED.display();
